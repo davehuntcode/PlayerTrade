@@ -11,42 +11,37 @@ import org.bukkit.plugin.PluginManager;
 
 public class PlayerTradeListener implements Listener {
 
-	public PlayerTradePlugin plugin;
+    public PlayerTradePlugin plugin;
 
-	public PlayerTradeListener(PlayerTradePlugin plugin) {
-		this.plugin = plugin;
-	}
+    public PlayerTradeListener(PlayerTradePlugin plugin) {
+	this.plugin = plugin;
+    }
 
-	public void register() {
-		PluginManager manager;
-		manager = plugin.getServer().getPluginManager();
-		manager.registerEvents(this, plugin);
-	}
+    public void register() {
+	PluginManager manager;
+	manager = plugin.getServer().getPluginManager();
+	manager.registerEvents(this, plugin);
+    }
 
-	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
 
-		Player initiater = event.getPlayer();
-		Entity target = event.getRightClicked();
+	Player requester = event.getPlayer();
+	Entity requested = event.getRightClicked();
 
-		PlayerTradePlayer sender = PlayerTradePlayer.getPlayerByName(initiater
-				.getName());
+	PlayerTradePlayer sender = PlayerTradePlayer.getTradingPlayer(requester.getName());
 
-		if ((sender != null) && sender.isRequested()) {
-			sender.tradeCount++;
+	if ((sender != null) && sender.isRequested()) {
+	    sender.tradeCount++;
 
-			PlayerTradePlayer other = PlayerTradePlayer.getPlayerByName(sender
-					.getName());
-			other.sendMessage("You have accepted " + sender.getName()
-					+ "'s trade request.");
-			initiater.sendMessage(other.getName()
-					+ " has accepted your trade request.");
+	    PlayerTradePlayer other = PlayerTradePlayer.getTradingPlayer(sender   .getName());
+	    other.sendMessage("You have accepted " + sender.getName()   + "'s trade request.");
+	    requester.sendMessage(other.getName()   + " has accepted your trade request.");
 
-			sender.acceptRequest(other);
-		} else if ((target != null) && (initiater != null))
-			plugin.command.requestTrade(initiater, new String[] { "request",
-					((CraftPlayer) target).getDisplayName() });
+	    sender.acceptRequest(other);
+	} else if ((requested != null) && (requester != null))
+	    plugin.command.requestTrade(requester, new String[] { "request",   ((CraftPlayer) requested).getDisplayName() });
 
-	}
+    }
 
 }

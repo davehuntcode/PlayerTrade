@@ -11,158 +11,173 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class PlayerTradePlayer {
 
-	public boolean isTrading;
-	private EntityPlayer entityPlayer;
-	private PlayerTradePlayer acceptor;
-	private PlayerTradeModel trade;
+    public boolean isTrading;
+    private EntityPlayer entityPlayer;
+    private PlayerTradePlayer requested;
+    private PlayerTradePlayer requester;
+    private PlayerTradeModel trade;
 
-	public int chestStartSlotIndex = -1;
-	public int chestEndSlotIndex = -1;
-	public int acceptButton = -1;
-	public int cancelButton = -1;
+    public int chestStartSlotIndex = -1;
+    public int chestEndSlotIndex = -1;
+    public int acceptButton = -1;
+    public int cancelButton = -1;
 
-	public static List<PlayerTradePlayer> players = new ArrayList<PlayerTradePlayer>();
+    public static List<PlayerTradePlayer> players = new ArrayList<PlayerTradePlayer>();
 
-	public int tradeCount = 0;
+    public int tradeCount = 0;
 
-	public PlayerTradePlugin plugin;
+    public PlayerTradePlugin plugin;
 
-	public PlayerTradePlayer(EntityPlayer player, PlayerTradePlugin plugin) {
-		this.plugin = plugin;
-		this.entityPlayer = player;
-		players.add(this);
+    public PlayerTradePlayer(EntityPlayer player, PlayerTradePlugin plugin) {
+	this.plugin = plugin;
+	this.entityPlayer = player;
+	players.add(this);
+    }
+
+    public void handleClickEvent(InventoryClickEvent e) {
+
+	if (e.isShiftClick()) {
+	    e.setCancelled(true);
+	    return;
 	}
 
-	public void handleClickEvent(InventoryClickEvent e) {
-		if (e.isShiftClick())
-		{
-			e.setCancelled(true);
-			return;
-		}
 
-		int itemSlot = e.getRawSlot();
-		e.getCurrentItem();
-		if (this.trade.initiater.equals(this)) {
-		} else {
-		}
 
-		if ((itemSlot > this.chestStartSlotIndex)
-				&& (itemSlot < this.chestEndSlotIndex)) {
+	e.setCancelled(true);
+    }
 
-		}
+    public boolean onTradeRequest(PlayerTradePlayer other) {
 
-		e.setCancelled(true);
+	if ((tradeCount >= plugin.config.tradeThreshold)) {
+	    sendMessage(ChatColor.RED   + "You have attempted to send too many trade requests! Please wait for your existing trades to expire then try again.");
+	    return false;
+	} else if (other != null) {
+	    tradeCount++;
+
+	    this.requested = other;
+	    other.requested = this;
+
+	    startRequestTimer(this.plugin.config.tradeRequestTimeout);
+
+	    return true;
 	}
 
-	public boolean onTradeRequest(PlayerTradePlayer other) {
+	return false;
+    }
 
-		if ((tradeCount >= plugin.config.tradeThreshold)) {
-			sendMessage(ChatColor.RED
-					+ "You have attempted to send too many trade requests! Please wait for your existing trades to expire then try again.");
-			return false;
-		} else if (other != null) {
-			tradeCount++;
+    private void startRequestTimer(int timeInSeconds) {
+	this.plugin.getServer().getScheduler()
+		.scheduleSyncDelayedTask(this.plugin, new Runnable() {
+		    @Override
+		    public void run() {
+			PlayerTradePlayer.this.cancelRequest(true,
+				"Request timed out.");
+		    }
+		}, timeInSeconds * 20);
+    }
 
-			this.acceptor = other;
-			other.acceptor = this;
+    protected void cancelRequest(boolean informPlayers, String reasonForCancel) {
 
-			startRequestTimer(this.plugin.config.tradeRequestTimeout);
+	try {
+	    if (informPlayers)
+	        if (this.requested != null) {
+	    	
+	        requested.entityPlayer.sendMessage("Your trade request has been declined. Reason: "+ reasonForCancel);
+	    	this.entityPlayer.sendMessage(requested.entityPlayer.getName() + "'s trade request has been declined. Reason: " + reasonForCancel);
+	        
+	        } else {
+	    	
+	            this.entityPlayer.sendMessage("Your trade request has been declined. Reason: " + reasonForCancel);
+	    	requested.entityPlayer.sendMessage(requested.entityPlayer.getName() + "'s trade request has been declined. Reason: " + reasonForCancel);
+	        }
 
-			return true;
-		}
+	    
+	    if(this.requested != null) {
+	        players.remove(this.requested);
+	    } else {
+	        players.remove(this.requester);
+	    }
 
-		return false;
+	    players.remove(this);
+	    
+	    this.requested = null;
+	    this.requester = null;
+	} catch (Exception e) {
+	  plugin.warn("Could not cancel trade! " + e.getMessage());
 	}
+	if (this.tradeCount > 0)
+	    this.tradeCount--;
 
-	private void startRequestTimer(int timeInSeconds) {
-		this.plugin.getServer().getScheduler()
-				.scheduleSyncDelayedTask(this.plugin, new Runnable() {
-					@Override
-					public void run() {
-						PlayerTradePlayer.this.cancelRequest(true,
-								"Request timed out.");
-					}
-				}, timeInSeconds * 20);
+    }
+
+    private void closeTrade() {
+	this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+	   public void run() {
+	       ((Player) PlayerTradePlayer.this).closeInventory();
+	   }
+	});
+	
+    }
+
+    public void acceptRequest(PlayerTradePlayer other) {
+	if (((other != null) && (this.requested != null))) {
+
+	    this.requested = null;
+	    other.requested = null;
+
+	    this.isTrading = true;
+	    other.isTrading = true;
+
+	    this.trade = new PlayerTradeModel(other, this, plugin);
+	    other.trade = this.trade;
+
+	    trade.doTrade();
 	}
+    }
 
-	protected void cancelRequest(boolean informPlayers, String reasonForCancel) {
-
-		if (informPlayers)
-			if (this.acceptor != null) {
-				acceptor.entityPlayer
-						.sendMessage("Your trade request has been declined. Reason: "
-								+ reasonForCancel);
-				this.entityPlayer.sendMessage(acceptor.entityPlayer.getName()
-						+ "'s trade request has been declined. Reason: "
-						+ reasonForCancel);
-			} else {
-				this.entityPlayer
-						.sendMessage("Your trade request has been declined. Reason: "
-								+ reasonForCancel);
-				acceptor.entityPlayer.sendMessage(acceptor.entityPlayer
-						.getName()
-						+ "'s trade request has been declined. Reason: "
-						+ reasonForCancel);
-			}
-
-		this.acceptor = null;
-
-		if (this.tradeCount > 0) this.tradeCount--;
-
+    public void removePlayer(PlayerTradePlayer other) {
+	if ((other != null) && players.contains(other)) {
+	    players.remove(other);
+	    other = null;
 	}
+    }
 
-	public void acceptRequest(PlayerTradePlayer other) {
-		if (((other != null) && (this.acceptor != null))) {
+    public static PlayerTradePlayer getTradingPlayer(Player player) {
+	return getTradingPlayer(player.getName());
+    }
 
-			this.acceptor = null;
-			other.acceptor = null;
+    public static PlayerTradePlayer getTradingPlayer(String name) {
+	for (PlayerTradePlayer player : players)
+	    if (player.entityPlayer.name.equalsIgnoreCase(name))
+		return player;
+	return null;
+    }
 
-			this.isTrading = true;
-			other.isTrading = true;
+    public void openTradeScreen(PlayerTradeChest tradeChestScreen) {
+	this.entityPlayer.openContainer(tradeChestScreen);
+    }
 
-			this.trade = new PlayerTradeModel(this, other, plugin);
-			other.trade = this.trade;
+    public boolean isRequested() {
+	return this.requested != null;
+    }
 
-			trade.doTrade();
-		}
-	}
+    public PlayerTradePlayer getRequestedTarget() {
+	return requested;
+    }
+    
+    public PlayerTradePlayer getRequester() {
+	if(this.isRequested())
+	    return this.requester;
+	return null;
+    }
 
-	public void removePlayer(PlayerTradePlayer other) {
-		if ((other != null) && players.contains(other)) {
-			players.remove(other);
-			other = null;
-		}
-	}
+    public void sendMessage(String string) {
+	this.entityPlayer.sendMessage(string);
 
-	public static PlayerTradePlayer getPlayer(Player player) {
-		return getPlayerByName(player.getName());
-	}
+    }
 
-	public static PlayerTradePlayer getPlayerByName(String name) {
-		for (PlayerTradePlayer player : players)
-			if (player.entityPlayer.name.equalsIgnoreCase(name)) return player;
-		return null;
-	}
-
-	public void openTradeScreen(PlayerTradeChest tradeChestScreen) {
-		this.entityPlayer.openContainer(tradeChestScreen);
-	}
-
-	public boolean isRequested() {
-		return this.acceptor != null;
-	}
-
-	public PlayerTradePlayer getRequestedTarget() {
-		return acceptor;
-	}
-
-	public void sendMessage(String string) {
-		this.entityPlayer.sendMessage(string);
-
-	}
-
-	public String getName() {
-		return entityPlayer.getName();
-	}
+    public String getName() {
+	return entityPlayer.getName();
+    }
 
 }

@@ -21,13 +21,7 @@
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  
  
+ TODO:
+ 	Fix bugs
+ 	Get trading working
  
- 
- 
-TODO:
-Implement trading system
-	- Require players to accept trade in order to process [WIP]
-	- Implement timeout timers [complete]
-Implement logging system
-	- Trades will have a uid [complete]
-	- Trades will have two entries each; one for the seller, one for the buyer [complete]
