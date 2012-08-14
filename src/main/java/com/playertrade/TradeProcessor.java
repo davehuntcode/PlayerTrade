@@ -40,13 +40,6 @@ public class TradeProcessor {
 	
 	this.requester.showInv(tradeWindow.tradeInv);
 	this.requested.showInv(tradeWindow.tradeInv);
-	
-	this.tradeWindow.tradeInv.setItem(0,  new ItemStack(35, 1, (short) 14));
-	this.tradeWindow.tradeInv.setItem(1,  new ItemStack(35, 1, (short) 5));
-	this.tradeWindow.tradeInv.setItem(35, new ItemStack(35, 1, (short) 14));
-	this.tradeWindow.tradeInv.setItem(34, new ItemStack(35, 1, (short) 5));
-
-	
     }
     
     public void cancelTrade() {

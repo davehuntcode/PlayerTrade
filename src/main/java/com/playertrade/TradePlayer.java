@@ -91,6 +91,7 @@ public class TradePlayer {
 		if(this.hasConfirmedTrade()) {
 		    
 		} else {
+		    plugin.info(String.format("%s has added/removed %s", e.getWhoClicked().getName(), i.getType().name()));
 		    e.setCancelled(true);
 		}
 	    }
