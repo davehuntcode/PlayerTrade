@@ -19,23 +19,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PlayerTradePlugin extends JavaPlugin {
+public class TradePlugin extends JavaPlugin {
     public static String pluginName = "PlayerTrade";
 
     public Logger log;
-    public PlayerTradeConfiguration config;
-    public PlayerTradeCommand command;
-    public PlayerTradeListener listener;
+    public TradeConfiguration config;
+    public TradeCommand command;
+    public TradeListener listener;
 
-    public List<PlayerTradeModel> activeTrades = new ArrayList<PlayerTradeModel>();
+    public List<TradeProcessor> activeTrades = new ArrayList<TradeProcessor>();
 
     @Override
     public void onDisable() {
-	config.save();	
+	config.save();
     }
 
     @Override
@@ -51,25 +50,11 @@ public class PlayerTradePlugin extends JavaPlugin {
     @Override
     public void onLoad() {
 
-	log = this.getLogger();
-	config = new PlayerTradeConfiguration(this);
-	command = new PlayerTradeCommand(this);
-	listener = new PlayerTradeListener(this);
+	log      = this.getLogger();
+	config   = new TradeConfiguration(this);
+	command  = new TradeCommand(this);
+	listener = new TradeListener(this);
 
-    }
-
-    public boolean withinDistance(Location p1, Location p2, double r) {
-	if (r <= 0)
-	    return true; // No limit, negative limit defaults to no
-			 // limit
-
-	int x = (int) (p2.getX() - p1.getX());
-	int y = (int) (p2.getY() - p1.getY());
-	int z = (int) (p2.getZ() - p1.getZ());
-
-	double d = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-
-	return d < r;
     }
 
     public boolean hasPermission(CommandSender sender, String perm) {

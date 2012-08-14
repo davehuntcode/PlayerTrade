@@ -1,0 +1,31 @@
+name: PlayerTrade
+version: 0.101
+description: This plugin adds a safe trade system.
+author: davehuntcode 
+website: https://github.com/davehuntcode/PlayerTrade
+
+main: com.playertrade.PlayerTradePlugin
+
+commands:
+  playertrade:
+    description: PlayerTrade command
+    aliases: ['pt']
+    
+permissions:
+  playertrade.*:
+    description: Access to everything related to the PlayerTrade plugin.
+    children:
+      playertrade.trade: true
+      playertrade.request: true
+   
+  playertrade.trade:
+    description: Access to the /playertrade trade command.
+    default: op
+  playertrade.request:
+    description: Access to the /playertrade request <name> command to send a trade request.
+    default: op
+  playertrade.accept:
+    description: Access to the /playertrade accept <name> command to accept a request.
+    default: op
+
+   

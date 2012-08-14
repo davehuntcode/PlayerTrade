@@ -17,21 +17,24 @@ package com.playertrade;
 
 import java.io.File;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class PlayerTradeConfiguration extends YamlConfiguration {
+public class TradeConfiguration extends YamlConfiguration {
 
     public File config;
-    public PlayerTradePlugin plugin;
+    public TradePlugin plugin;
 
-    // Plugin settings
-    public boolean debug; // Output debug messages
-    public boolean logEachTrade; // Log trades
-    public double maxTradeRadius; // Distance players must be to trade
-    public int tradeRequestTimeout; // Time a trade request will expire
-    public int tradeThreshold; // Max trades per minute
+    //                            Plugin settings
+    public boolean debug; 			// Output debug messages
+    public boolean logEachTrade;		// Log trades
+    public double maxTradeRadius;		// Distance players must be to trade
+    public int tradeRequestTimeout;		// Time a trade request will expire
+    public int tradeThreshold;			// Max trades per minute
 
-    public PlayerTradeConfiguration(PlayerTradePlugin plugin) {
+    
+    
+    public TradeConfiguration(TradePlugin plugin) {
 	this.plugin = plugin;
 	this.config = new File(plugin.getDataFolder(), "config.yml");
     }
@@ -43,11 +46,12 @@ public class PlayerTradeConfiguration extends YamlConfiguration {
 	    plugin.warn("Unable to save configuration, using defaults instead.");
 	}
 
-	set("playertrade.debug", debug);
-	set("playertrade.logtrades", logEachTrade);
-	set("playertrade.maxtraderadius", maxTradeRadius);
-	set("playertrade.requesttimeout", tradeRequestTimeout);
-	set("playertrade.threshold", tradeThreshold);
+	set("playertrade.config.debug", debug);
+	set("playertrade.config.logtrades", logEachTrade);
+	set("playertrade.config.maxtraderadius", maxTradeRadius);
+	set("playertrade.config.requesttimeout", tradeRequestTimeout);
+	set("playertrade.config.threshold", tradeThreshold);
+	
     }
 
     public void load() {
@@ -63,6 +67,7 @@ public class PlayerTradeConfiguration extends YamlConfiguration {
 	tradeRequestTimeout = getInt("playertrade.requesttimeout", 10);
 	tradeThreshold = getInt("playertrade.threshold", 5);
 
+    
 	save();
 
     }
