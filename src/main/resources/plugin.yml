@@ -17,15 +17,13 @@ permissions:
     children:
       playertrade.trade: true
       playertrade.request: true
+      playertrade.accept: true
    
-  playertrade.trade:
-    description: Access to the /playertrade trade command.
+  tradeplugin.perm.request:
+    description: Access to the /playertrade request <name> command.
     default: op
-  playertrade.request:
-    description: Access to the /playertrade request <name> command to send a trade request.
-    default: op
-  playertrade.accept:
-    description: Access to the /playertrade accept <name> command to accept a request.
+  tradeplugin.perm.accept:
+    description: Access to the /playertrade accept <name|empty> command to accept a trade request.
     default: op
 
    

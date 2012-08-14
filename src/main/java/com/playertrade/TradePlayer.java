@@ -8,8 +8,16 @@ public class TradePlayer {
     
     public boolean trading;
 
-    public TradePlayer() {
-	// TODO Auto-generated constructor stub
+    public TradePlugin plugin;
+
+    public TradePlayer(TradePlugin plugin, Player player) {
+	this.plugin = plugin;
+	this.self = player;
+    }
+    
+    
+    public boolean hasPermission(String perm) {
+	return plugin.hasPermission(self.getName(), perm);
     }
 
 }
