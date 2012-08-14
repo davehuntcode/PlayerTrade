@@ -13,8 +13,8 @@ public class TradingScreen extends InventoryView {
     
     public TradingScreen(TradePlugin plugin, TradePlayer rqr, TradePlayer rqd) {
 	this.plugin = plugin;
-	this.requesterInv = plugin.getServer().createInventory(null, 9, "Trading " + rqd.self.getDisplayName());
-	this.requestedInv = plugin.getServer().createInventory(null, 9, "Trading " + rqr.self.getDisplayName());
+	this.requesterInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqd.self.getDisplayName());
+	this.requestedInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqr.self.getDisplayName());
     }
     
     @Override
