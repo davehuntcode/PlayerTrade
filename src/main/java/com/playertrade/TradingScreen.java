@@ -13,8 +13,10 @@ public class TradingScreen extends InventoryView {
     
     public TradingScreen(TradePlugin plugin, TradePlayer rqr, TradePlayer rqd) {
 	this.plugin = plugin;
-	this.requesterInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqd.self.getDisplayName());
-	this.requestedInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqr.self.getDisplayName());
+	this.requesterInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqr.self.getDisplayName());
+	this.requestedInv = plugin.getServer().createInventory(null, 36, "Trading with " + rqd.self.getDisplayName());
+	rqr.inv = requesterInv;
+	rqd.inv = requestedInv;
     }
     
     @Override
@@ -34,7 +36,7 @@ public class TradingScreen extends InventoryView {
 
     @Override
     public InventoryType getType() {
-	return InventoryType.CHEST;
+	return InventoryType.PLAYER;
     }
 
 }
