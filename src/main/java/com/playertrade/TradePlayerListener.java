@@ -32,9 +32,7 @@ public class TradePlayerListener implements Listener {
 	    TradePlayer requester = new TradePlayer(plugin, reqr);
 	    TradePlayer requested = new TradePlayer(plugin, (Player) reqd);
 
-	    if (requester.hasPermission("tradeplugin.perm.request")
-		    && requested.hasPermission("tradeplugin.perm.accept")) {
-
+	    if (requester.hasPermission("tradeplugin.perm.trade") && requested.hasPermission("tradeplugin.perm.trade")) {
 		TradeProcessor proc = new TradeProcessor(plugin, requester, requested);
 		proc.initiateTrade();
 	    }

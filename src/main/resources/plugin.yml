@@ -19,11 +19,9 @@ permissions:
       playertrade.request: true
       playertrade.accept: true
    
-  tradeplugin.perm.request:
-    description: Access to the /playertrade request <name> command.
+  tradeplugin.perm.trade:
+    description: Access to the /trade command
     default: op
-  tradeplugin.perm.accept:
-    description: Access to the /playertrade accept <name|empty> command to accept a trade request.
-    default: op
+
 
    
