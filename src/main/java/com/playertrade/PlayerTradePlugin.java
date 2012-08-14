@@ -35,7 +35,7 @@ public class PlayerTradePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-	config.save();
+	config.save();	
     }
 
     @Override
