@@ -20,4 +20,9 @@ public class TradePlayer {
 	return plugin.hasPermission(self.getName(), perm);
     }
 
+
+    public void showTradeWindow(TradingScreen tradeWindow) {
+	self.openInventory(tradeWindow);
+    }
+
 }

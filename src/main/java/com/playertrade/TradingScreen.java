@@ -7,9 +7,19 @@ import org.bukkit.inventory.InventoryView;
 
 public class TradingScreen extends InventoryView {
 
+    public Inventory requesterInv;
+    public Inventory requestedInv;
+    public TradePlugin plugin;
+    
+    public TradingScreen(TradePlugin plugin, TradePlayer rqr, TradePlayer rqd) {
+	this.plugin = plugin;
+	this.requesterInv = plugin.getServer().createInventory(null, 9, "Trading " + rqd.self.getDisplayName());
+	this.requestedInv = plugin.getServer().createInventory(null, 9, "Trading " + rqr.self.getDisplayName());
+    }
+    
     @Override
     public Inventory getBottomInventory() {
-	return null;
+	return requestedInv;
     }
 
     @Override
@@ -19,7 +29,7 @@ public class TradingScreen extends InventoryView {
 
     @Override
     public Inventory getTopInventory() {
-	return null;
+	return requesterInv;
     }
 
     @Override

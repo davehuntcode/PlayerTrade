@@ -41,11 +41,11 @@ public class TradeConfiguration extends YamlConfiguration {
 	    plugin.warn("Unable to save configuration, using defaults instead.");
 	}
 
-	set("playertrade.debug", debug);
-	set("playertrade.logtrades", logEachTrade);
-	set("playertrade.maxtraderadius", maxTradeRadius);
-	set("playertrade.requesttimeout", tradeRequestTimeout);
-	set("playertrade.threshold", tradeThreshold);
+	set("trade.debug", debug);
+	set("trade.logtrades", logEachTrade);
+	set("trade.maxtraderadius", maxTradeRadius);
+	set("trade.requesttimeout", tradeRequestTimeout);
+	set("trade.threshold", tradeThreshold);
     }
 
     public void load() {
@@ -55,11 +55,11 @@ public class TradeConfiguration extends YamlConfiguration {
 	    plugin.warn("Unable to load configuration, using defaults instead.");
 	}
 
-	debug = getBoolean("playertrade.debug", true);
-	logEachTrade = getBoolean("playertrade.logtrades", true);
-	maxTradeRadius = getDouble("playertrade.maxtraderadius", 10);
-	tradeRequestTimeout = getInt("playertrade.requesttimeout", 10);
-	tradeThreshold = getInt("playertrade.threshold", 5);
+	debug = getBoolean("trade.debug", true);
+	logEachTrade = getBoolean("trade.logtrades", true);
+	maxTradeRadius = getDouble("trade.maxtraderadius", 10);
+	tradeRequestTimeout = getInt("trade.requesttimeout", 10);
+	tradeThreshold = getInt("trade.threshold", 5);
 
 	save();
 

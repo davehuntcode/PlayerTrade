@@ -11,13 +11,11 @@ commands:
     description: PlayerTrade command
     
 permissions:
-  playertrade.*:
+  tradeplugin.*:
     description: Access to everything related to the PlayerTrade plugin.
     children:
-      playertrade.trade: true
-      playertrade.request: true
-      playertrade.accept: true
-   
+      tradeplugin.perm.trade: true
+     
   tradeplugin.perm.trade:
     description: Access to the /trade command
     default: op
