@@ -1,10 +1,10 @@
-name: PlayerTrade
-version: 0.101
+name: TradePlugin
+version: 1.0
 description: This plugin adds a safe trade system.
 author: davehuntcode 
 website: https://github.com/davehuntcode/PlayerTrade
 
-main: com.playertrade.PlayerTradePlugin
+main: com.playertrade.TradePlugin
 
 commands:
   playertrade:
