@@ -16,17 +16,20 @@ public class TradePlugin extends JavaPlugin {
 
     public Logger log;
     public TradeConfiguration config;
-    public TradePlayerListener listener;
+    public TradePlayerListener tradePlayerListener;
+    public TradeScreenListener tradeScreenListener;
 
     public List<TradeProcessor> activeTrades = new ArrayList<TradeProcessor>();
 
     public void onEnable() {
 	log = this.getLogger();
 	config = new TradeConfiguration(this);
-	listener = new TradePlayerListener(this);
+	tradePlayerListener = new TradePlayerListener(this);
+	tradeScreenListener = new TradeScreenListener(this);
 
 	config.load();
-	listener.register();
+	tradePlayerListener.register();
+	tradeScreenListener.register();
 
 	getCommand("trade").setExecutor(this);
     }

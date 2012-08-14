@@ -30,34 +30,29 @@ public class TradeProcessor {
     public void initiateTrade() {
 	plugin.info(String.format("Starting trade between %s and %s", requester.self.getName(), requested.self.getName()));
 	
-	this.requested.inTradeWith = this.requester;
-	this.requester.inTradeWith = this.requested;
+	this.requested.registerTrade(this.requested);
+	this.requested.registerTrade(this.requested);
 	
-	this.requester.trading = true;
-	this.requested.trading = true;
+	this.requester.setTrading(true);
+	this.requested.setTrading(true);
 	
 	this.tradeWindow = new TradingScreen(plugin, requester, requested);
 	
-	this.requester.showInv(requester.inv);
-	this.requested.showInv(requested.inv);
+	this.requester.showInv(tradeWindow.tradeInv);
+	this.requested.showInv(tradeWindow.tradeInv);
 	
-	this.tradeWindow.setItem(0,  new ItemStack(35, 1, (short) 14));
-	this.tradeWindow.setItem(1,  new ItemStack(35, 1, (short) 5));
-	this.tradeWindow.setItem(35, new ItemStack(35, 1, (short) 14));
-	this.tradeWindow.setItem(34, new ItemStack(35, 1, (short) 5));
+	this.tradeWindow.tradeInv.setItem(0,  new ItemStack(35, 1, (short) 14));
+	this.tradeWindow.tradeInv.setItem(1,  new ItemStack(35, 1, (short) 5));
+	this.tradeWindow.tradeInv.setItem(35, new ItemStack(35, 1, (short) 14));
+	this.tradeWindow.tradeInv.setItem(34, new ItemStack(35, 1, (short) 5));
 
 	
     }
     
     public void cancelTrade() {
-	this.requester.closeTradeWindow();
-	this.requested.closeTradeWindow();
+	this.requester.cancelTrade();
+	this.requested.cancelTrade();
 	
-	this.requested.inTradeWith = null;
-	this.requester.inTradeWith = null;
-	
-	this.requester.trading = false;
-	this.requested.trading = false;
     }
 
 }

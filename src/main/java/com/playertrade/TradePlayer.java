@@ -6,17 +6,21 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class TradePlayer {
     public static List<TradePlayer> players = new ArrayList<TradePlayer>();
     
     public Player self;
-    public Inventory inv;
     
     public TradePlayer inTradeWith;
     
     public boolean trading;
-
+    public boolean confirmed;
+    
+    public int minSlot;
+    public int maxSlot;
+    
     public TradePlugin plugin;
 
     public TradePlayer(TradePlugin plugin, Player player) {
@@ -42,6 +46,13 @@ public class TradePlayer {
 	self.closeInventory();
     }
     
+    public void cancelTrade() {
+   	this.closeTradeWindow();
+   	TradePlayer.players.remove(inTradeWith);
+   	this.inTradeWith = null;
+   	this.setTrading(false);
+   	
+       }
     
     public static TradePlayer getTradePlayer(Player p) {
 	return getTradePlayer(p.getName());
@@ -55,7 +66,14 @@ public class TradePlayer {
 	}
 	return null;
     }
+    
+    public void sendMessage(String m) {
+	self.sendMessage(m);
+    }
 
+    public void setTrading(boolean trading) {
+	this.trading = trading;
+    }
 
     public boolean isTrading() {
 	return trading;
@@ -63,7 +81,41 @@ public class TradePlayer {
 
 
     public void handleInventoryClick(InventoryClickEvent e) {
-	plugin.info("Player is handling Click");
+	try {
+	    int slot = e.getSlot();
+	    ItemStack i = e.getCurrentItem();
+	    TradePlayer other = null;
+	    if(this.inTradeWith != null) other = this.inTradeWith;
+	    
+	    if( (slot > minSlot) && (slot < maxSlot) ) {
+		if(this.hasConfirmedTrade()) {
+		    
+		} else {
+		    e.setCancelled(true);
+		}
+	    }
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+    }
+
+
+    public boolean hasConfirmedTrade() {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+
+    public TradePlayer getRequested() {
+	return inTradeWith;
+    }
+
+
+    public void registerTrade(TradePlayer other) {
+	players.add(other);
+	this.setTrading(true);
+	this.inTradeWith = other;
+	
     }
 
 }
