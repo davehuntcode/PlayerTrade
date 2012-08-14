@@ -7,9 +7,8 @@ website: https://github.com/davehuntcode/PlayerTrade
 main: com.playertrade.TradePlugin
 
 commands:
-  playertrade:
+  trade:
     description: PlayerTrade command
-    aliases: ['pt']
     
 permissions:
   playertrade.*:
