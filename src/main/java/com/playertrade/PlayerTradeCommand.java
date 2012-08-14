@@ -15,17 +15,20 @@
 
 package com.playertrade;
 
+import net.minecraft.server.EntityPlayer;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class TradeCommand implements CommandExecutor {
+public class PlayerTradeCommand implements CommandExecutor {
 
-    public TradePlugin plugin;
+    public PlayerTradePlugin plugin;
 
-    public TradeCommand(TradePlugin plugin) {
+    public PlayerTradeCommand(PlayerTradePlugin plugin) {
 	this.plugin = plugin;
     }
 
@@ -36,6 +39,8 @@ public class TradeCommand implements CommandExecutor {
 	    sendUsage(sender);
 	    return false;
 	}
+
+	plugin.info(String.format("Sender: %s Command: %s", sender.getName(), args[0]));
 
 	if ((sender instanceof Player)) {
 	    if (args[0].equalsIgnoreCase("request"))
@@ -53,9 +58,18 @@ public class TradeCommand implements CommandExecutor {
 
 	if (plugin.hasPermission(sender, "playertrade.accept")) {
 
-	} else {
+	    PlayerTradePlayer requester = PlayerTradePlayer.getTradingPlayer((Player) sender);
+	    
+	    if ((requester != null) && requester.isRequested()) {
+		PlayerTradePlayer requested = requester.getRequester();
+		requested.sendMessage("You have accepted " + sender.getName()+ "'s trade request.");
+		requester.sendMessage(requested.getName()  + " has accepted your trade request.");
+		requested.acceptRequest(requester);
+	    } else
+		requester.sendMessage("You must request a trade with the other player!");
+
+	} else
 	    sender.sendMessage(ChatColor.RED   + "You do not have the permission to accept a trade");
-	}
     }
 
     public void denyTrade(CommandSender sender, String[] args) {
@@ -63,24 +77,48 @@ public class TradeCommand implements CommandExecutor {
     }
 
     public void requestTrade(CommandSender sender, String[] args) {
+	Player requester = (Player) sender;
 
 	if (args.length < 2)
 	    sender.sendMessage(ChatColor.RED + "Usage: /pt request <name>");
 
 	if (plugin.hasPermission(sender, "playertrade.request")) {
 
-	} else {
+	    Player acceptor = plugin.getServer().getPlayer(args[1]);
+
+	    EntityPlayer p1 = ((CraftPlayer) requester).getHandle();
+	    EntityPlayer p2 = ((CraftPlayer) acceptor).getHandle();
+
+	    if (p2 == p1) {
+		sender.sendMessage(ChatColor.RED + "You can not trade yourself!");
+		return;
+	    }
+
+	    if (p2 != null) {
+
+		if (plugin.withinDistance(requester.getLocation(),
+			acceptor.getLocation(), plugin.config.maxTradeRadius)) {
+
+		    PlayerTradePlayer requestor = new PlayerTradePlayer(p1, this.plugin);
+		    PlayerTradePlayer requested = new PlayerTradePlayer(p2, this.plugin);
+
+		    if (requestor.onTradeRequest(requested)) {
+			acceptor.sendMessage(String.format(ChatColor.BLUE+ "[%s] "+ ChatColor.GREEN + "wants to trade with you!", requester.getDisplayName()));
+		    }
+
+		} else
+		    sender.sendMessage(ChatColor.RED  + "You are too far away from your target. You must be within "  + plugin.config.maxTradeRadius + " blocks!");
+
+	    } else
+		sender.sendMessage(ChatColor.RED + "Could not find a player named " + args[1]);
+
+	} else
 	    sender.sendMessage(ChatColor.RED   + "You do not have the permission to request a trade");
-	}
     }
 
     public void sendUsage(CommandSender sender) {
 	sender.sendMessage(ChatColor.GREEN + "Player Trade Help:");
-	
-	sender.sendMessage("PlayerTrade "
-		+ plugin.getDescription().getVersion() + " by: "
-		+ plugin.getDescription().getAuthors());
-	
+	sender.sendMessage("PlayerTrade " + plugin.getDescription().getVersion() + " by: " + plugin.getDescription().getAuthors());
 	sender.sendMessage(ChatColor.AQUA + "________________________________________");
 	sender.sendMessage("General information: /pt or /playertrade");
 	sender.sendMessage("Request a trade: /pt request <name>");
