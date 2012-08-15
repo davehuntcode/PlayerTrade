@@ -18,9 +18,6 @@ public class TradePlayer {
     public boolean trading;
     public boolean confirmed;
 
-    public int minSlot;
-    public int maxSlot;
-
     public TradePlugin plugin;
 
     public TradePlayer(TradePlugin plugin, Player player) {
@@ -65,6 +62,34 @@ public class TradePlayer {
 	return null;
     }
 
+    public void registerTrade(TradePlayer other) {
+	players.add(other);
+	this.setTrading(true);
+	this.inTradeWith = other;
+
+    }
+
+    public void handleInventoryClick(InventoryClickEvent e) {
+	try {
+	    int slot = e.getSlot();
+	    ItemStack i = e.getCurrentItem();
+	    TradePlayer other = null;
+
+	    if (this.inTradeWith != null)
+		other = this.inTradeWith;
+
+	    if (this.hasConfirmedTrade()) {
+
+	    } else {
+		plugin.info(String.format("%s has added/removed %s", e
+			.getWhoClicked().getName(), i.getType().name()));
+		e.setCancelled(true);
+	    }
+	} catch (Exception ex) {
+	    ex.printStackTrace();
+	}
+    }
+
     public void sendMessage(String m) {
 	self.sendMessage(m);
     }
@@ -77,42 +102,12 @@ public class TradePlayer {
 	return trading;
     }
 
-    public void handleInventoryClick(InventoryClickEvent e) {
-	try {
-	    int slot = e.getSlot();
-	    ItemStack i = e.getCurrentItem();
-	    TradePlayer other = null;
-	    if (this.inTradeWith != null)
-		other = this.inTradeWith;
-
-	    if ((slot > minSlot) && (slot < maxSlot)) {
-		if (this.hasConfirmedTrade()) {
-
-		} else {
-		    plugin.info(String.format("%s has added/removed %s", e
-			    .getWhoClicked().getName(), i.getType().name()));
-		    e.setCancelled(true);
-		}
-	    }
-	} catch (Exception ex) {
-	    ex.printStackTrace();
-	}
-    }
-
     public boolean hasConfirmedTrade() {
-	// TODO Auto-generated method stub
-	return false;
+	return confirmed;
     }
 
     public TradePlayer getRequested() {
 	return inTradeWith;
-    }
-
-    public void registerTrade(TradePlayer other) {
-	players.add(other);
-	this.setTrading(true);
-	this.inTradeWith = other;
-
     }
 
 }

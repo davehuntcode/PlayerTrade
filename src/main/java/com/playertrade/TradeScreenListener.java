@@ -49,14 +49,17 @@ public class TradeScreenListener implements Listener {
 	 try {
 	    Inventory i = e.getInventory();
 	    Player p = (Player) e.getPlayer();
+	   
 	    TradePlayer eventPlayer = TradePlayer.getTradePlayer(p);
 	    TradePlayer otherPlayer = eventPlayer.inTradeWith;
-	    if (eventPlayer != null && otherPlayer != null) {
+	   
+	    if (eventPlayer != null && eventPlayer.isTrading() && otherPlayer != null && eventPlayer != otherPlayer) {
 		eventPlayer.sendMessage("You closed the trade window and auto-cancelled the trade.");
 		otherPlayer.sendMessage(p.getDisplayName() + " closed thier trade window and auto-cancelled the trade.");
 		eventPlayer.cancelTrade();
 		otherPlayer.cancelTrade();
 	    }
+	    
 	} catch (Exception e2) {
 	    plugin.warn("Could not process inventory close for: " + e.getPlayer().getName());
 	}
